@@ -1,5 +1,5 @@
 #!/bin/bash
-# postinst script for astroberry-server-sysmod
+# postinst script for astroberry64-server-sysmod
 # Some tweaks come from AstroPi https://github.com/rlancaste/AstroPi3
 # For all of these credits go to Rob Lancaster
 
@@ -31,13 +31,13 @@ if [ "$1" == "configure" ]; then
 	fi
 
 	# change default user image
-	if [ -e /etc/lightdm/lightdm-gtk-greeter.conf ] && [ -z "$(grep '^default-user-image=\/usr\/share\/astroberry-server-artwork\/astroberry-logo-small.png' /etc/lightdm/lightdm-gtk-greeter.conf)" ]; then
-	    sed -i "s/^\(#\|\)default-user-image=.*/default-user-image=\/usr\/share\/astroberry-server-artwork\/astroberry-logo-small.png/g" /etc/lightdm/lightdm-gtk-greeter.conf
+	if [ -e /etc/lightdm/lightdm-gtk-greeter.conf ] && [ -z "$(grep '^default-user-image=\/usr\/share\/astroberry64-server-artwork\/astroberry64-logo-small.png' /etc/lightdm/lightdm-gtk-greeter.conf)" ]; then
+	    sed -i "s/^\(#\|\)default-user-image=.*/default-user-image=\/usr\/share\/astroberry64-server-artwork\/astroberry64-logo-small.png/g" /etc/lightdm/lightdm-gtk-greeter.conf
 	fi
 
 	# change default user image
 	if [ -e /etc/lightdm/lightdm-gtk-greeter.conf ] && [ -z "$(grep '^default-user-image=' /etc/lightdm/lightdm-gtk-greeter.conf)" ]; then
-	    echo "default-user-image=/usr/share/astroberry-server-artwork/astroberry-logo-small.png" >> /etc/lightdm/lightdm-gtk-greeter.conf
+	    echo "default-user-image=/usr/share/astroberry64-server-artwork/astroberry64-logo-small.png" >> /etc/lightdm/lightdm-gtk-greeter.conf
 	fi
 
 	# enable qt5 menu icons
@@ -51,21 +51,21 @@ if [ "$1" == "configure" ]; then
 	fi
 
 	# set start-here icon
-	if [ -e /usr/share/astroberry-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/16x16/places/start-here.png.bak ]; then
+	if [ -e /usr/share/astroberry64-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/16x16/places/start-here.png.bak ]; then
 	    mv /usr/share/icons/PiXflat/16x16/places/start-here.png /usr/share/icons/PiXflat/16x16/places/start-here.png.bak
-	    ln -sf /usr/share/astroberry-server-artwork/start-here.svg /usr/share/icons/PiXflat/16x16/places/start-here.png
+	    ln -sf /usr/share/astroberry64-server-artwork/start-here.svg /usr/share/icons/PiXflat/16x16/places/start-here.png
 	fi
-	if [ -e /usr/share/astroberry-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/24x24/places/start-here.png.bak ]; then
+	if [ -e /usr/share/astroberry64-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/24x24/places/start-here.png.bak ]; then
 	    mv /usr/share/icons/PiXflat/24x24/places/start-here.png /usr/share/icons/PiXflat/24x24/places/start-here.png.bak
-	    ln -sf /usr/share/astroberry-server-artwork/start-here.svg /usr/share/icons/PiXflat/24x24/places/start-here.png
+	    ln -sf /usr/share/astroberry64-server-artwork/start-here.svg /usr/share/icons/PiXflat/24x24/places/start-here.png
 	fi
-	if [ -e /usr/share/astroberry-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/32x32/places/start-here.png.bak ]; then
+	if [ -e /usr/share/astroberry64-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/32x32/places/start-here.png.bak ]; then
 	    mv /usr/share/icons/PiXflat/32x32/places/start-here.png /usr/share/icons/PiXflat/32x32/places/start-here.png.bak
-	    ln -sf /usr/share/astroberry-server-artwork/start-here.svg /usr/share/icons/PiXflat/32x32/places/start-here.png
+	    ln -sf /usr/share/astroberry64-server-artwork/start-here.svg /usr/share/icons/PiXflat/32x32/places/start-here.png
 	fi
-	if [ -e /usr/share/astroberry-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/48x48/places/start-here.png.bak ]; then
+	if [ -e /usr/share/astroberry64-server-artwork/start-here.svg ] && [ ! -e /usr/share/icons/PiXflat/48x48/places/start-here.png.bak ]; then
 	    mv /usr/share/icons/PiXflat/48x48/places/start-here.png /usr/share/icons/PiXflat/48x48/places/start-here.png.bak
-	    ln -sf /usr/share/astroberry-server-artwork/start-here.svg /usr/share/icons/PiXflat/48x48/places/start-here.png
+	    ln -sf /usr/share/astroberry64-server-artwork/start-here.svg /usr/share/icons/PiXflat/48x48/places/start-here.png
 	fi
 
 	# generate UUID
@@ -82,7 +82,7 @@ if [ "$1" == "configure" ]; then
 
 	# generate unique SSID for Wireless HotSpot
 	if [ -e /etc/NetworkManager/system-connections/HotSpot.nmconnection ] && [ -n "$(grep '^ssid=CHANGE_ME$' /etc/NetworkManager/system-connections/HotSpot.nmconnection)" ]; then
-		SSID="astroberry-${UUID:31}"
+		SSID="astroberry64-${UUID:31}"
 	        sed -i "s/^ssid=CHANGE_ME/ssid=$SSID/g" /etc/NetworkManager/system-connections/HotSpot.nmconnection
 	fi
 

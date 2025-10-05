@@ -1,5 +1,5 @@
 #!/bin/bash
-# postrm script for astroberry-server-wui
+# postrm script for astroberry64-server-wui
 
 if [ "$1" == "remove" -o "$1" == "purge" ]; then
 
@@ -44,7 +44,7 @@ if [ "$1" == "remove" -o "$1" == "purge" ]; then
 	    sed -i "s/^icon-theme-name=/#icon-theme-name=/g" /etc/lightdm/lightdm-gtk-greeter.conf
 	fi
 
-	if [ -e /etc/lightdm/lightdm-gtk-greeter.conf ] && [ -n "$(grep '^default-user-image=\/usr\/share\/astroberry-server-artwork\/astroberry-logo-small.png' /etc/lightdm/lightdm-gtk-greeter.conf)" ]; then
+	if [ -e /etc/lightdm/lightdm-gtk-greeter.conf ] && [ -n "$(grep '^default-user-image=\/usr\/share\/astroberry64-server-artwork\/astroberry64-logo-small.png' /etc/lightdm/lightdm-gtk-greeter.conf)" ]; then
 	    sed -i "s/^default-user-image=/#default-user-image=/g" /etc/lightdm/lightdm-gtk-greeter.conf
 	fi
 

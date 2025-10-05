@@ -1,5 +1,5 @@
 #!/bin/bash
-# preinst script for astroberry-server-sysmod
+# preinst script for astroberry64-server-sysmod
 # Some tweaks come from AstroPi https://github.com/rlancaste/AstroPi3
 # For all of these credits go to Rob Lancaster
 
