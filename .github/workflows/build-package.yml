@@ -1,0 +1,91 @@
+name: Build Debian Package
+
+on:
+  push:
+    branches:
+      - astroberry64-migration
+      - main
+  pull_request:
+    branches:
+      - astroberry64-migration
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: arm64
+
+    - name: Build package in Debian Bookworm arm64 container
+      run: |
+        docker run --rm --platform linux/arm64 \
+          -v ${{ github.workspace }}:/workspace \
+          -w /workspace \
+          debian:bookworm-slim \
+          bash -c '
+            set -e
+            echo "Installing build dependencies..."
+            apt-get update
+            apt-get install -y debhelper devscripts cdbs cmake build-essential
+
+            echo "Building package..."
+            dpkg-buildpackage -b -us -uc
+
+            echo "Moving .deb files to build directory..."
+            mkdir -p /workspace/build
+            mv ../*.deb /workspace/build/ || true
+            mv ../*.buildinfo /workspace/build/ || true
+            mv ../*.changes /workspace/build/ || true
+
+            echo "Build artifacts:"
+            ls -lh /workspace/build/
+          '
+
+    - name: Upload package artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: debian-packages
+        path: build/*.deb
+        if-no-files-found: error
+
+    - name: Upload build info
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-info
+        path: |
+          build/*.buildinfo
+          build/*.changes
+        if-no-files-found: warn
+
+    - name: Auto-commit to astroberry64-repo (testing suite)
+      if: github.ref == 'refs/heads/astroberry64-migration' || github.ref == 'refs/heads/main'
+      env:
+        GH_TOKEN: ${{ secrets.ASTROBERRY64_REPO_TOKEN }}
+      run: |
+        # Clone the repo with token authentication
+        git clone https://x-access-token:${GH_TOKEN}@github.com/astroberry64/astroberry64-repo.git /tmp/repo
+        cd /tmp/repo
+
+        # Configure git
+        git config user.name "Astroberry64 Bot"
+        git config user.email "bot@astroberry64.github.io"
+
+        # Add package to testing suite
+        ./add-package.sh ${{ github.workspace }}/build/*.deb testing
+
+        # Commit and push
+        git add dists/bookworm-testing pool
+        git commit -m "Auto-add $(basename ${{ github.workspace }}/build/*.deb) to testing suite
+
+Built from ${{ github.repository }}@${{ github.sha }}
+
+🤖 Automated build via GitHub Actions" || echo "No changes to commit"
+        git push origin main || echo "Nothing to push"
