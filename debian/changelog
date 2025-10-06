@@ -1,3 +1,12 @@
+astroberry64-server-sysmod (2.0.6-astroberry64.2) bookworm; urgency=medium
+
+  * Fix dependencies for Debian Bookworm
+  * Remove obsolete fam dependency (no longer in Bookworm)
+  * Remove obsolete phonon-backend-gstreamer (Qt4, use Qt5 version)
+  * Move chrony to Recommends to avoid conflict with systemd-timesyncd
+
+ -- Astroberry64 Team <astroberry64@speckle.red>  Mon, 06 Oct 2025 22:00:00 +0200
+
 astroberry64-server-sysmod (2.0.6-astroberry64.1) bookworm; urgency=medium
 
   * Initial Astroberry64 migration for 64-bit Raspberry Pi OS
