@@ -1,3 +1,10 @@
+astroberry64-server-sysmod (2.0.6-astroberry64.5) trixie; urgency=medium
+
+  * Remove duplicate hotspot configuration files
+  * wifi-enable-autohotspot.conf, wifi-powersave-off.conf, HotSpot.nmconnection now owned by astroberry64-server-hotspot only
+
+ -- Astroberry64 Team <astroberry64@speckle.red>  Tue, 08 Oct 2025 17:00:00 +0200
+
 astroberry64-server-sysmod (2.0.6-astroberry64.4) trixie; urgency=medium
 
   * Remove software-properties-common dependency (not available in Trixie)
