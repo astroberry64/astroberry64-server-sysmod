@@ -9,7 +9,7 @@ Homepage: https://github.com/astroberry64
 
 Package: astroberry64-server-sysmod
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, astroberry64-server-artwork, software-properties-common, samba, network-manager, network-manager-gnome, arc-theme, qt5-qmltooling-plugins, phonon4qt5-backend-gstreamer, gstreamer1.0-plugins-ugly, gpsd, gpsd-clients
+Depends: ${shlibs:Depends}, ${misc:Depends}, astroberry64-server-artwork, samba, network-manager, network-manager-gnome, arc-theme, qt5-qmltooling-plugins, phonon4qt5-backend-gstreamer, gstreamer1.0-plugins-ugly, gpsd, gpsd-clients
 Recommends: chrony
 Replaces: zram-tools
 Description: Operating system mods and tweaks for Astroberry64 Server 
