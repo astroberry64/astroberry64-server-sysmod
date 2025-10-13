@@ -32,69 +32,50 @@ if [ "$1" == "install" ]; then
 	    sed -i "s/--autologin pi --noclear/--autologin astroberry --noclear/g" /etc/systemd/system/getty@tty1.service.d/autologin.conf
 	fi
 
-	# set display to 1920x1080
-	# see available modes: https://www.raspberrypi.org/documentation/configuration/config-txt/video.md
-	if [ -n "$(grep 'hdmi_force_hotplug=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)hdmi_force_hotplug=.*/hdmi_force_hotplug=1/g" /boot/config.txt
-	else
-	    echo "hdmi_force_hotplug=1" >> /boot/config.txt
+	# Configure boot config and cmdline (Trixie uses /boot/firmware/)
+	BOOT_CONFIG="/boot/firmware/config.txt"
+	BOOT_CMDLINE="/boot/firmware/cmdline.txt"
+
+	# Add Astroberry configuration block if not already present
+	if [ ! -f "$BOOT_CONFIG" ]; then
+		echo "ERROR: $BOOT_CONFIG not found!"
+	elif [ -z "$(grep '# Astroberry64 Configuration' $BOOT_CONFIG)" ]; then
+		# Ensure [all] section exists
+		if [ -z "$(grep '^\[all\]' $BOOT_CONFIG)" ]; then
+			echo "" >> $BOOT_CONFIG
+			echo "[all]" >> $BOOT_CONFIG
+		fi
+
+		# Add Astroberry configuration block under [all] section
+		cat >> $BOOT_CONFIG << 'EOF'
+
+# Astroberry64 Configuration
+# See: https://www.raspberrypi.org/documentation/configuration/config-txt/
+
+# Display configuration - 1920x1080 minimum for astronomy applications
+# Required for proper INDI/KStars/Ekos window layouts
+hdmi_force_hotplug=1   # Force HDMI output even without monitor connected
+hdmi_group=2           # DMT (Display Monitor Timings) for computer monitors
+hdmi_mode=82           # 1920x1080 @ 60Hz
+
+# Hardware interfaces for astronomy equipment
+dtparam=i2c_arm=on     # I2C for sensors and focusers
+dtparam=spi=on         # SPI for cameras and sensors
+enable_uart=1          # UART for GPS modules and mount controllers
+
+# System configuration
+gpu_mem=128            # GPU memory allocation in MiB for desktop performance
+EOF
 	fi
 
-	if [ -n "$(grep 'hdmi_group=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)hdmi_group=.*/hdmi_group=2/g" /boot/config.txt
-	else
-	    echo "hdmi_group=2" >> /boot/config.txt
+	# Disable serial console on tty1 (frees up serial for astronomy equipment)
+	if [ -f "$BOOT_CMDLINE" ] && [ -n "$(grep 'console=serial0,115200 console=tty1' $BOOT_CMDLINE)" ]; then
+		sed -i "s/console=serial0,115200 console=tty1/console=tty1/g" $BOOT_CMDLINE
 	fi
 
-	if [ -n "$(grep 'hdmi_mode=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)hdmi_mode=.*/hdmi_mode=82/g" /boot/config.txt
-	else
-	    echo "hdmi_mode=82" >> /boot/config.txt
-	fi
-
-	# enable I2C
-	if [ -n "$(grep 'dtparam=i2c_arm=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)dtparam=i2c_arm=.*/dtparam=i2c_arm=on/g" /boot/config.txt
-	else
-	    echo "dtparam=i2c_arm=on" >> /boot/config.txt
-	fi
-
-	# enable SPI
-	if [ -n "$(grep 'dtparam=spi=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)dtparam=spi=.*/dtparam=spi=on/g" /boot/config.txt
-	else
-	    echo "dtparam=spi=on" >> /boot/config.txt
-	fi
-
-	# enable audio
-	if [ -n "$(grep 'dtparam=audio=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)dtparam=audio=.*/dtparam=audio=on/g" /boot/config.txt
-	else
-	    echo "dtparam=audio=on" >> /boot/config.txt
-	fi
-
-	# enable uart
-	if [ -n "$(grep 'enable_uart=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)enable_uart=.*/enable_uart=1/g" /boot/config.txt
-	else
-	    echo "enable_uart=1" >> /boot/config.txt
-	fi
-
-	# set gpu memory
-	if [ -n "$(grep 'gpu_mem=' /boot/config.txt)" ]; then
-	    sed -i "s/^\(#\|\)gpu_mem=.*/gpu_mem=128/g" /boot/config.txt
-	else
-	    echo "gpu_mem=128" >> /boot/config.txt
-	fi
-
-	# disable serial on tty1
-	if [ -n "$(grep 'console=serial0,115200 console=tty1' /boot/cmdline.txt)" ]; then
-	    sed -i "s/console=serial0,115200 console=tty1/console=tty1/g" /boot/cmdline.txt
-	fi
-
-	# fix for RPi 4 video resolution
-	if [ -n "$(grep 'dtoverlay=vc4-fkms-v3d' /boot/config.txt)" ]; then
-	    sed -i "s/^dtoverlay=vc4-fkms-v3d/#dtoverlay=vc4-fkms-v3d/g" /boot/config.txt
+	# Fix for RPi 4/5 video resolution (comment out old fake KMS driver)
+	if [ -n "$(grep '^dtoverlay=vc4-fkms-v3d' $BOOT_CONFIG 2>/dev/null)" ]; then
+		sed -i "s/^dtoverlay=vc4-fkms-v3d/#dtoverlay=vc4-fkms-v3d  # Disabled by Astroberry64 - conflicts with headless VNC/g" $BOOT_CONFIG
 	fi
 
 	# set hostname
