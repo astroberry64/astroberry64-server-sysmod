@@ -73,6 +73,13 @@ EOF
 		sed -i "s/console=serial0,115200 console=tty1/console=tty1/g" $BOOT_CMDLINE
 	fi
 
+	# Add virtual display parameter for headless VNC/RustDesk support
+	# This creates a virtual HDMI display at 1920x1080@60Hz even without physical monitor
+	# Higher resolutions (2560x1440, 3840x2160) are added dynamically via xrandr
+	if [ -f "$BOOT_CMDLINE" ] && [ -z "$(grep 'video=HDMI-A-1:' $BOOT_CMDLINE)" ]; then
+		sed -i 's/$/ video=HDMI-A-1:1920x1080@60D/' $BOOT_CMDLINE
+	fi
+
 	# Fix for RPi 4/5 video resolution (comment out old fake KMS driver)
 	if [ -n "$(grep '^dtoverlay=vc4-fkms-v3d' $BOOT_CONFIG 2>/dev/null)" ]; then
 		sed -i "s/^dtoverlay=vc4-fkms-v3d/#dtoverlay=vc4-fkms-v3d  # Disabled by Astroberry64 - conflicts with headless VNC/g" $BOOT_CONFIG

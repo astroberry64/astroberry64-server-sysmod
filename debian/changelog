@@ -1,3 +1,11 @@
+astroberry64-server-sysmod (2.0.6-astroberry64.6) trixie; urgency=medium
+
+  * Add kernel video parameter for headless remote desktop support
+  * Configure virtual HDMI display at 1920x1080@60Hz in cmdline.txt
+  * Enables RustDesk and noVNC operation without physical monitor
+
+ -- Astroberry64 Team <astroberry64@speckle.red>  Mon, 14 Oct 2025 20:00:00 +0200
+
 astroberry64-server-sysmod (2.0.6-astroberry64.5) trixie; urgency=medium
 
   * Remove duplicate hotspot configuration files
