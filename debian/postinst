@@ -86,10 +86,8 @@ if [ "$1" == "configure" ]; then
 	        sed -i "s/^ssid=CHANGE_ME/ssid=$SSID/g" /etc/NetworkManager/system-connections/HotSpot.nmconnection
 	fi
 
-	# disable wpa_supplicant
-	if [ -e /etc/wpa_supplicant/wpa_supplicant.conf ]; then
-		mv -f /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
-	fi
+	# Note: No need to disable wpa_supplicant - it doesn't exist in Raspberry Pi OS Trixie+
+	# NetworkManager is the default since Bookworm (Debian 12)
 
 	# fix Wireless HotSpot permissions
 	if [ -e /etc/NetworkManager/system-connections/HotSpot.nmconnection ]; then
